@@ -10,7 +10,7 @@
             <td>
                 <a href="<?= url('/patient/appointments/' . $a['id']) ?>" class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
                 <?php if ($a['status'] === 'completed'): ?><a href="<?= url('/patient/reviews/create/' . $a['id']) ?>" class="btn btn-sm btn-outline-warning"><i class="fas fa-star"></i></a><?php endif; ?>
-                <?php if (in_array($a['status'], ['confirmed', 'in_progress']) && ($a['appointment_type_id'] ?? 1) == 2): ?><a href="<?= url('/chat/' . $a['id']) ?>" class="btn btn-sm btn-outline-success"><i class="fas fa-comments"></i></a><?php endif; ?>
+                <?php if (in_array($a['status'], ['confirmed', 'in_progress', 'completed'])): ?><a href="<?= url('/messages/' . $a['id']) ?>" class="btn btn-sm btn-outline-success" title="Nhắn tin"><i class="fas fa-comments me-1"></i>💬</a><?php endif; ?>
             </td>
         </tr>
         <?php endforeach; ?>

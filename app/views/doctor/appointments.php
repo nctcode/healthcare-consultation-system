@@ -6,7 +6,7 @@
         <tr><td><?= format_date($a['appointment_date']) ?></td><td><?= format_time($a['appointment_time']) ?></td><td><strong><?= e($a['patient_name'] ?? '') ?></strong></td><td><?= appointment_type_label($a['appointment_type_id'] ?? 1) ?></td><td><?= truncate($a['symptoms'] ?? '', 40) ?></td><td><?= status_badge($a['status']) ?></td>
         <td>
             <?php if (in_array($a['status'], ['confirmed','in_progress'])): ?><a href="<?= url('/doctor/examine/' . $a['id']) ?>" class="btn btn-sm btn-gradient"><i class="fas fa-stethoscope"></i></a><?php endif; ?>
-            <?php if ($a['appointment_type_id'] == 2): ?><a href="<?= url('/chat/' . $a['id']) ?>" class="btn btn-sm btn-outline-success"><i class="fas fa-comments"></i></a><?php endif; ?>
+            <?php if (in_array($a['status'], ['confirmed', 'in_progress', 'completed'])): ?><a href="<?= url('/messages/' . $a['id']) ?>" class="btn btn-sm btn-outline-success" title="Nhắn tin"><i class="fas fa-comments me-1"></i>💬</a><?php endif; ?>
         </td></tr>
         <?php endforeach; ?>
     </tbody>

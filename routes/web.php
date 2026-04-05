@@ -135,3 +135,10 @@ $router->get('api/doctors/by-specialty/{id}', 'AppointmentController@doctorsBySp
 $router->get('api/schedules/{doctor_id}', 'AppointmentController@doctorSchedule');
 $router->post('api/checkin/verify', 'ReceptionistController@verifyCheckin');
 $router->get('api/dashboard/stats', 'AdminController@apiStats');
+
+// ==========================================
+// MESSAGE ROUTES
+// ==========================================
+$router->get('messages/{appointment_id}', 'MessageController@chat');
+$router->post('messages/send', 'MessageController@send');
+$router->get('messages/fetch/{appointment_id}', 'MessageController@fetch');

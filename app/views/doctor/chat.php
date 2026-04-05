@@ -1,7 +1,7 @@
 <?php
 /**
- * View: Giao diện chat cho bệnh nhân
- * Path: views/patient/chat.php
+ * View: Giao diện chat cho bác sĩ
+ * Path: views/doctor/chat.php
  */
 ?>
 <div class="container mt-4">
@@ -9,13 +9,13 @@
         <div class="col-md-8 mx-auto">
             <!-- Header -->
             <div class="card border-bottom-0 rounded-top">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header bg-success text-white">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <h5 class="mb-0">💬 Nhắn tin với BS. <?= htmlspecialchars($appointment['doctor_name']) ?></h5>
+                            <h5 class="mb-0">💬 Nhắn tin với BN. <?= htmlspecialchars($appointment['patient_name']) ?></h5>
                             <small>Lịch khám: <?= date('d/m/Y H:i', strtotime($appointment['appointment_date'] . ' ' . $appointment['appointment_time'])) ?></small>
                         </div>
-                        <a href="<?= BASE_URL ?>/patient/appointments" class="btn btn-sm btn-light">← Quay lại</a>
+                        <a href="<?= BASE_URL ?>/doctor/appointments" class="btn btn-sm btn-light">← Quay lại</a>
                     </div>
                 </div>
             </div>
@@ -42,7 +42,7 @@
                         style="resize: none;"
                     ></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary mt-2 w-100">
+                <button type="submit" class="btn btn-success mt-2 w-100">
                     ✈️ Gửi
                 </button>
             </form>
@@ -88,7 +88,7 @@
     }
 
     .message.sent .message-bubble {
-        background: #0d6efd;
+        background: #198754;
         color: white;
         border-radius: 18px 18px 4px 18px;
     }
