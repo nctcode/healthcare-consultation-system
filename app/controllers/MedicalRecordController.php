@@ -47,4 +47,55 @@ class MedicalRecordController extends Controller
             'appointment' => $appointment,
         ], 'dashboard');
     }
+
+    /** Chỉnh sửa bệnh án */
+    public function edit(string $id): void
+    {
+        $this->requireRole('doctor');
+        $recordModel = new MedicalRecord();
+        $record = $recordModel->findFull((int)$id);
+
+        // Kiểm tra bệnh án tồn tại
+        if (!$record) { $this->redirect('/doctor/medical-records'); return; }
+
+        // Kiểm tra doctor chỉ có thể sửa bệnh án của chính mình
+        $doctor = (new Doctor())->findByUserId(Auth::id());
+        if ($doctor['id'] != $record['doctor_id']) {
+            $_SESSION['flash_error'] = 'Bạn không có quyền sửa bệnh án này.';
+            $this->redirect('/doctor/medical-records');
+            return;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!$this->validateCSRF()) { $this->redirect('/doctor/medical-records'); return; }
+
+            // Cập nhật bệnh án
+            $recordModel->update((int)$id, [
+                'diagnosis'      => $this->input('diagnosis'),
+                'symptoms'       => $this->input('symptoms'),
+                'treatment'      => $this->input('treatment'),
+                'notes'          => $this->input('notes'),
+                'follow_up_date' => $this->input('follow_up_date') ?: null,
+                'updated_at'     => date('Y-m-d H:i:s'),
+            ]);
+
+            $_SESSION['flash_success'] = 'Cập nhật bệnh án thành công.';
+            $this->redirect('/doctor/medical-records');
+        } else {
+            // Lấy bệnh án đầy đủ
+            $record = $recordModel->findFull((int)$id);
+
+            $this->view('doctor/medical_record_form', [
+                'title'  => 'Chỉnh sửa bệnh án',
+                'record' => $record,
+            ], 'dashboard');
+        }
+    }
+
+    /** Cập nhật bệnh án (deprecated - dùng edit thay) */
+    public function update(string $id): void
+    {
+        // Delegate to edit
+        $this->edit($id);
+    }
 }

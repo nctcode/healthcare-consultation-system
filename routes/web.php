@@ -34,6 +34,10 @@ $router->any('admin/doctors/edit/{id}', 'AdminController@editDoctor');
 $router->get('admin/doctors/delete/{id}', 'AdminController@deleteDoctor');
 
 $router->any('admin/patients', 'AdminController@patients');
+$router->any('admin/patients/create', 'AdminController@createPatient');
+$router->any('admin/patients/edit/{id}', 'AdminController@editPatient');
+$router->get('admin/patients/delete/{id}', 'AdminController@deletePatient');
+
 $router->any('admin/nurses', 'AdminController@nurses');
 $router->any('admin/receptionists', 'AdminController@receptionists');
 
@@ -91,8 +95,13 @@ $router->get('doctor/appointments', 'DoctorController@appointments');
 $router->any('doctor/examine/{id}', 'DoctorController@examine');
 $router->get('doctor/medical-records', 'DoctorController@medicalRecords');
 $router->any('doctor/medical-records/create/{appointment_id}', 'MedicalRecordController@create');
+$router->any('doctor/medical-records/edit/{id}', 'MedicalRecordController@edit');
+$router->post('doctor/medical-records/update/{id}', 'MedicalRecordController@update');
 $router->any('doctor/prescriptions/create/{record_id}', 'PrescriptionController@create');
 $router->get('doctor/patients', 'DoctorController@patients');
+$router->any('doctor/patients/create', 'DoctorController@createPatient');
+$router->any('doctor/patients/edit/{id}', 'DoctorController@editPatient');
+$router->get('doctor/patients/delete/{id}', 'DoctorController@deletePatient');
 $router->any('doctor/chat/{appointment_id}', 'MessageController@chat');
 
 // ==========================================

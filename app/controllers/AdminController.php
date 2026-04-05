@@ -163,6 +163,115 @@ class AdminController extends Controller
         ], 'dashboard');
     }
 
+    /** Tạo bệnh nhân */
+    public function createPatient(): void
+    {
+        $this->requireRole('admin');
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!$this->validateCSRF()) { $this->redirect('/admin/patients'); return; }
+
+            $userModel = new User();
+            // Kiểm tra email đã tồn tại
+            if ($userModel->findByEmail($this->input('email'))) {
+                $_SESSION['flash_error'] = 'Email đã tồn tại.';
+                flash_old_input($_POST);
+                $this->redirect('/admin/patients/create');
+                return;
+            }
+
+            // Tạo user (role_id = 2 là patient)
+            $userId = $userModel->create([
+                'role_id'   => 2,
+                'email'     => $this->input('email'),
+                'password'  => password_hash($this->input('password') ?: 'patient123', PASSWORD_DEFAULT),
+                'full_name' => $this->input('full_name'),
+                'phone'     => $this->input('phone'),
+                'status'    => $this->input('status', 'active'),
+            ]);
+
+            // Tạo bệnh nhân
+            (new Patient())->create([
+                'user_id'             => $userId,
+                'date_of_birth'       => $this->input('date_of_birth'),
+                'gender'              => $this->input('gender'),
+                'address'             => $this->input('address'),
+                'blood_type'          => $this->input('blood_type'),
+                'allergies'           => $this->input('allergies'),
+                'insurance_number'    => $this->input('insurance_number'),
+                'emergency_contact'   => $this->input('emergency_contact'),
+            ]);
+
+            $_SESSION['flash_success'] = 'Thêm bệnh nhân thành công.';
+            $this->redirect('/admin/patients');
+        } else {
+            $this->view('admin/patient_form', [
+                'title'   => 'Thêm bệnh nhân',
+                'patient' => null,
+            ], 'dashboard');
+        }
+    }
+
+    /** Sửa bệnh nhân */
+    public function editPatient(string $id): void
+    {
+        $this->requireRole('admin');
+        $patientModel = new Patient();
+        $patient = $patientModel->findWithUser((int)$id);
+
+        if (!$patient) { $this->redirect('/admin/patients'); return; }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (!$this->validateCSRF()) { $this->redirect('/admin/patients'); return; }
+
+            // Cập nhật user
+            $userData = [
+                'full_name' => $this->input('full_name'),
+                'phone'     => $this->input('phone'),
+                'status'    => $this->input('status'),
+            ];
+            if ($this->input('password')) {
+                $userData['password'] = password_hash($this->input('password'), PASSWORD_DEFAULT);
+            }
+            (new User())->update($patient['user_id'], $userData);
+
+            // Cập nhật bệnh nhân
+            $patientModel->update((int)$id, [
+                'date_of_birth'       => $this->input('date_of_birth'),
+                'gender'              => $this->input('gender'),
+                'address'             => $this->input('address'),
+                'blood_type'          => $this->input('blood_type'),
+                'allergies'           => $this->input('allergies'),
+                'insurance_number'    => $this->input('insurance_number'),
+                'emergency_contact'   => $this->input('emergency_contact'),
+            ]);
+
+            $_SESSION['flash_success'] = 'Cập nhật bệnh nhân thành công.';
+            $this->redirect('/admin/patients');
+        } else {
+            $this->view('admin/patient_form', [
+                'title'   => 'Sửa thông tin bệnh nhân',
+                'patient' => $patient,
+            ], 'dashboard');
+        }
+    }
+
+    /** Xóa bệnh nhân */
+    public function deletePatient(string $id): void
+    {
+        $this->requireRole('admin');
+        $patientModel = new Patient();
+        $patient = $patientModel->find((int)$id);
+
+        if ($patient) {
+            // Xóa user (sẽ cascade xóa patient do foreign key)
+            (new User())->delete($patient['user_id']);
+        }
+
+        $_SESSION['flash_success'] = 'Đã xóa bệnh nhân.';
+        $this->redirect('/admin/patients');
+    }
+
     /** Quản lý điều dưỡng */
     public function nurses(): void
     {
